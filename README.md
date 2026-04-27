@@ -19,3 +19,32 @@ Die Entwicklung einer Software zur Abstimmung zwischen unserer Firma und dem Tou
 ## 1.1 BPMN Prozess
 ## 1.2 UI - Modell
 ## 1.3 Personas
+
+---
+
+# 2. Programmierung
+## 2.1 Programm Übersicht
+
+---
+
+# 3. Dokumentationen 
+## 3.1 technische Dokumentation
+## 3.2 User- Dokumentation 
+
+---
+
+# 4 Software - Anwendung
+
+---
+# 5 Präsentation 
+
+
+--- 
+
+## Fragen?
+Kontaktieren Sie uns gerne hier:  
+Antonio.BlazquezPerez@studmail.hwg-lu.de
+Simon.Fritz@studmail.hwg-lu.de
+Laura.Steinbrenner@studmail.hwg-lu.de
+AnnaMaria.Wolter@studmail.hwg-lu.de
+Emir.Guerleyen@studmail.hwg-lu.de
