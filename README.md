@@ -43,8 +43,8 @@ Die Entwicklung einer Software zur Abstimmung zwischen unserer Firma und dem Tou
 
 ## Fragen?
 Kontaktieren Sie uns gerne hier:  
-Antonio.BlazquezPerez@studmail.hwg-lu.de
-Simon.Fritz@studmail.hwg-lu.de
-Laura.Steinbrenner@studmail.hwg-lu.de
-AnnaMaria.Wolter@studmail.hwg-lu.de
-Emir.Guerleyen@studmail.hwg-lu.de
+- Antonio.BlazquezPerez@studmail.hwg-lu.de
+- Simon.Fritz@studmail.hwg-lu.de
+- Laura.Steinbrenner@studmail.hwg-lu.de
+- AnnaMaria.Wolter@studmail.hwg-lu.de
+- Emir.Guerleyen@studmail.hwg-lu.de
