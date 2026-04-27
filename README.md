@@ -11,3 +11,5 @@ Die Entwicklung einer Software zur Abstimmung zwischen unserer Firma und dem Tou
 - Laura Steinbrenner  
 - Antonio Blazquez-Perez  
 - Emir Gürleyen
+
+<img width="1909" height="1077" alt="image" src="https://github.com/user-attachments/assets/d7fba447-8924-415c-839b-1fc330866ed0" />
