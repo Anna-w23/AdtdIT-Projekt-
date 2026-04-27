@@ -13,3 +13,9 @@ Die Entwicklung einer Software zur Abstimmung zwischen unserer Firma und dem Tou
 - Emir Gürleyen
 
 <img width="1909" height="1077" alt="image" src="https://github.com/user-attachments/assets/d7fba447-8924-415c-839b-1fc330866ed0" />
+
+
+# 1. Modellierung 
+## 1.1 BPMN Prozess
+## 1.2 UI - Modell
+## 1.3 Personas
