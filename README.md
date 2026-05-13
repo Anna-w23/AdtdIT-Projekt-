@@ -1,18 +1,21 @@
-## HWG Ludwigshafen – IBAIT24 ATdIT  
-### Projektgruppe B
+## SPACEMATE - SPACE READY IN T-MINUS ZERO 
+### Group 2: Flight Preparation
+HWG Ludwigshafen - Ausgewählte Themen der IT - IBAIT24
 
-Die Entwicklung einer Software zur Abstimmung zwischen unserer Firma und dem Touristen hinsichtlich der Planung und Vorbereitung seines Fluges ins Weltall.
+**Developing an innovative software system for a seamless and succesful flight preparation journey, ensuring a smooth path for an unforgettable space experience.**
 
-**Lehrbeauftragte:** Andreas Heck, Patrick Gutgesell  
+**Lecturers:** Andreas Heck & Patrick Gutgesell  
 
-**Gruppenmitglieder:**  
-- Anna Wolter  
-- Simon Fritz  
-- Laura Steinbrenner  
-- Antonio Blazquez-Perez  
-- Emir Gürleyen
+**Group members:** Antonio Blazquez-Perez, Simon Fritz, Emir Gürleyen, Laura Steinbrenner & Anna Wolter
+
+---
 
 <img width="1909" height="1077" alt="image" src="https://github.com/user-attachments/assets/d7fba447-8924-415c-839b-1fc330866ed0" />
+
+---
+
+# Project Description
+
 
 
 # 1. Modellierung 
@@ -41,10 +44,14 @@ Die Entwicklung einer Software zur Abstimmung zwischen unserer Firma und dem Tou
 
 --- 
 
-## Fragen?
-Kontaktieren Sie uns gerne hier:  
-- Antonio.BlazquezPerez@studmail.hwg-lu.de
-- Simon.Fritz@studmail.hwg-lu.de
-- Laura.Steinbrenner@studmail.hwg-lu.de
-- AnnaMaria.Wolter@studmail.hwg-lu.de
-- Emir.Guerleyen@studmail.hwg-lu.de
+## Questions?
+If you have any questions, feel free to reach out to our team via email:
+
+| Name                     | Role                     | Email                                     |
+|--------------------------|--------------------------|-------------------------------------------|
+| Antonio Blazquez-Perez   | UI Specialist            | Antonio.BlazquezPerez@studmail.hwg-lu.de  |
+| Simon Fritz              | Software Developer       | Simon.Fritz@studmail.hwg-lu.de            |
+| Emir Guerleyen           | Software Architect       | Emir.Guerleyen@studmail.hwg-lu.de         |
+| Laura Steinbrenner       | Product Owner            | Laura.Steinbrenner@studmail.hwg-lu.de     |
+| Anna Wolter              | User Documentation Lead  | AnnaMaria.Wolter@studmail.hwg-lu.de       |
+
