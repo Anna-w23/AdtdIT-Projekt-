@@ -49,9 +49,9 @@ If you have any questions, feel free to reach out to our team via email:
 
 | Name                     | Role                     | Email                                     |
 |--------------------------|--------------------------|-------------------------------------------|
-| Antonio Blazquez-Perez   | UI Specialist            | Antonio.BlazquezPerez@studmail.hwg-lu.de  |
+| Antonio Blazquez-Perez   | User Documentation Lead  | Antonio.BlazquezPerez@studmail.hwg-lu.de  |
 | Simon Fritz              | Software Developer       | Simon.Fritz@studmail.hwg-lu.de            |
 | Emir Guerleyen           | Software Architect       | Emir.Guerleyen@studmail.hwg-lu.de         |
 | Laura Steinbrenner       | Product Owner            | Laura.Steinbrenner@studmail.hwg-lu.de     |
-| Anna Wolter              | User Documentation Lead  | AnnaMaria.Wolter@studmail.hwg-lu.de       |
-
+| Anna Wolter              | UI Specialist            | AnnaMaria.Wolter@studmail.hwg-lu.de       |
+      
