@@ -14,33 +14,14 @@ HWG Ludwigshafen - Ausgewählte Themen der IT - IBAIT24
 
 ---
 
-# Project Description
 
+## 📘 Explore the Full Documentation
 
+All detailed project documentation — including personas, BPMN models, UI mockups, technical architecture and end‑user guides — is available in our Wiki.
 
-# 1. Modellierung 
-## 1.1 BPMN Prozess
-## 1.2 UI - Modell
-## 1.3 Personas
+👉 **[Open the SpaceMate Wiki](../../wiki)**
 
----
-
-# 2. Programmierung
-## 2.1 Programm Übersicht
-
----
-
-# 3. Dokumentationen 
-## 3.1 technische Dokumentation
-## 3.2 User- Dokumentation 
-
----
-
-# 4 Software - Anwendung
-
----
-# 5 Präsentation 
-
+The Wiki serves as the central hub for understanding how SpaceMate was designed, structured and implemented.
 
 --- 
 
