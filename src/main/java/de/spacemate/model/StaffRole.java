@@ -1,0 +1,14 @@
+package de.spacemate.model;
+
+public enum StaffRole {
+    CHIEF_PHYSICIAN,
+    RESIDENT_PHYSICIAN,
+    NIGHT_PHYSICIAN,
+    EYE_SPECIALIST,
+    CARDIOLOGIST,
+    NEUROLOGIST,
+    ORTHOPEDIST,
+    PSYCHOLOGIST,
+    SPACE_TRAINER,
+    PROCESS_MANAGER
+}
