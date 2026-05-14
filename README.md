@@ -13,15 +13,42 @@ HWG Ludwigshafen - Ausgewählte Themen der IT - IBAIT24
 <img width="1909" height="1077" alt="image" src="https://github.com/user-attachments/assets/d7fba447-8924-415c-839b-1fc330866ed0" />
 
 ---
+## ✨ What SpaceMate Is About
 
+SpaceMate is our intelligent coordination platform designed to streamline the entire **flight‑preparation journey** for commercial space tourists.  
+From medical checks to training sessions and scheduling - SpaceMate transforms a complex, multi‑role process into a **safe**, **efficient**, and **transparent** experience.
 
-## 📘 Explore the Full Documentation
+Our mission:  
+Enable every future space tourist to complete all preparation steps with clarity, confidence and minimal friction.
 
-All detailed project documentation — including personas, BPMN models, UI mockups, technical architecture and end‑user guides — is available in our Wiki.
+---
+
+## 🚀 What Makes SpaceMate Special
+
+With SpaceMate, we elevate the quality of space‑tourism preparation to a new level:
+
+### ⭐ **Clarity for Customers**  
+Tourists always know what comes next — no confusion, no missed steps.
+
+### ⭐ **Efficiency for Staff**  
+Doctors, trainers and process managers benefit from structured workflows and fewer manual tasks.
+
+### ⭐ **Safety Through Standardization**  
+Consistent processes reduce risk and support reliable decision‑making.
+
+### ⭐ **Transparency Across the Journey**  
+Progress tracking, reminders and clear communication create trust and reduce uncertainty.
+
+SpaceMate combines **process excellence**, **user‑centric design** and **technical structure** - a strong foundation for the future of space tourism.
+
+---
+
+## 📘 The SpaceMate Control Center
+
+Our Wiki serves as the **central hub** for everything that powers SpaceMate. There you’ll find everything that explains how SpaceMate was designed, structured and implemented.
 
 👉 **[Open the SpaceMate Wiki](../../wiki)**
 
-The Wiki serves as the central hub for understanding how SpaceMate was designed, structured and implemented.
 
 --- 
 
