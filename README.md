@@ -63,4 +63,8 @@ If you have any questions, feel free to reach out to our team via email:
 | Emir Guerleyen           | Software Architect       | Emir.Guerleyen@studmail.hwg-lu.de         |
 | Laura Steinbrenner       | Product Owner            | Laura.Steinbrenner@studmail.hwg-lu.de     |
 | Anna Wolter              | UI Specialist            | AnnaMaria.Wolter@studmail.hwg-lu.de       |
+
+---
+
+Thank you for exploring **SpaceMate** — *Space-ready in t-minus zero* 🚀
       
