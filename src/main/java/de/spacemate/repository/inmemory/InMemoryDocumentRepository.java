@@ -16,11 +16,6 @@ public class InMemoryDocumentRepository implements DocumentRepository {
     }
 
     @Override
-    public Optional<Document> findById(UUID id) {
-        return Optional.ofNullable(store.get(id));
-    }
-
-    @Override
     public List<Document> findByCustomerId(UUID customerId) {
         return store.values().stream()
                 .filter(d -> d.getCustomerId().equals(customerId))

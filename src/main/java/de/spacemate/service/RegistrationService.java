@@ -12,13 +12,13 @@ public class RegistrationService {
 
     private final CustomerRepository customerRepository;
     private final DocumentRepository documentRepository;
-    private final CustomerCommunicationService communicationService;
+    private final QuestionnaireCommunicationService communicationService;
     private final DocumentAnalysisService analysisService;
     private final CustomerFactory customerFactory;
 
     public RegistrationService(CustomerRepository customerRepository,
                                DocumentRepository documentRepository,
-                               CustomerCommunicationService communicationService,
+                               QuestionnaireCommunicationService communicationService,
                                DocumentAnalysisService analysisService,
                                CustomerFactory customerFactory) {
         this.customerRepository = customerRepository;

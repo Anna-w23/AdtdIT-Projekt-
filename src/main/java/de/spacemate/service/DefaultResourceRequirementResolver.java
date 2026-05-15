@@ -1,12 +1,11 @@
 package de.spacemate.service;
 
-import de.spacemate.model.Appointment;
-import de.spacemate.model.AppointmentType;
-import de.spacemate.model.ResourceCategory;
-import de.spacemate.model.ResourceRequirement;
+import de.spacemate.model.*;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 public class DefaultResourceRequirementResolver implements ResourceRequirementResolver {
 
@@ -19,14 +18,17 @@ public class DefaultResourceRequirementResolver implements ResourceRequirementRe
     private static final ResourceRequirement TRANSLATION_HEADPHONE_MANUAL =
             new ResourceRequirement(ResourceCategory.EQUIPMENT, "TRANSLATION_HEADPHONE", false);
 
+    private static final Map<AppointmentType.ResourceProfile, List<ResourceRequirement>> PROFILE_REQUIREMENTS;
+
+    static {
+        PROFILE_REQUIREMENTS = new EnumMap<>(AppointmentType.ResourceProfile.class);
+        PROFILE_REQUIREMENTS.put(AppointmentType.ResourceProfile.MEDICAL, List.of(ROOM_AUTO));
+        PROFILE_REQUIREMENTS.put(AppointmentType.ResourceProfile.TRAINING, List.of(TRAINING_ROOM_MANUAL, VR_HEADSET_MANUAL));
+    }
+
     @Override
     public List<ResourceRequirement> getRequirements(AppointmentType type) {
-        return switch (type) {
-            case INITIAL_MEDICAL, EYE_SPECIALIST, CARDIOLOGIST, NEUROLOGIST,
-                 ORTHOPEDIST, PSYCHOLOGIST_CONSULTATION,
-                 FINAL_MEDICAL -> List.of(ROOM_AUTO);
-            case SPACE_TRAINING -> List.of(TRAINING_ROOM_MANUAL, VR_HEADSET_MANUAL);
-        };
+        return PROFILE_REQUIREMENTS.getOrDefault(type.getResourceProfile(), List.of());
     }
 
     @Override

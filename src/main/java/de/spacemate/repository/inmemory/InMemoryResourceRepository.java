@@ -21,11 +21,6 @@ public class InMemoryResourceRepository implements ResourceRepository {
     }
 
     @Override
-    public List<Resource> findAll() {
-        return new ArrayList<>(store.values());
-    }
-
-    @Override
     public List<Resource> findByCategory(ResourceCategory category) {
         return store.values().stream()
                 .filter(r -> r.getCategory() == category)

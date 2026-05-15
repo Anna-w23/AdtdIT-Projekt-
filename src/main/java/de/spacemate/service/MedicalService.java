@@ -8,7 +8,6 @@ import de.spacemate.repository.MedicalReportRepository;
 
 import java.time.LocalDate;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 public class MedicalService {
@@ -74,10 +73,6 @@ public class MedicalService {
         customerRepository.save(customer);
 
         return report;
-    }
-
-    public Optional<MedicalReport> getLatestReport(UUID customerId) {
-        return medicalReportRepository.findLatestByCustomerId(customerId);
     }
 
     private void markAppointmentCompleted(Appointment appointment) {

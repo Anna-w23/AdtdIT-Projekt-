@@ -6,6 +6,7 @@ import java.util.UUID;
 
 public class DefaultStaffFactory implements StaffFactory {
 
+    // OCP: Factory is the designated place for polymorphic instantiation — switch here is intentional
     @Override
     public Staff create(UUID id, String name, StaffRole role) {
         return switch (role) {

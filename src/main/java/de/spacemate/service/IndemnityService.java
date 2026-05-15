@@ -14,12 +14,12 @@ public class IndemnityService {
     private final CustomerRepository customerRepository;
     private final IndemnityAgreementRepository agreementRepository;
     private final IndemnityAgreementFactory agreementFactory;
-    private final CustomerCommunicationService communicationService;
+    private final IndemnityCommunicationService communicationService;
 
     public IndemnityService(CustomerRepository customerRepository,
                             IndemnityAgreementRepository agreementRepository,
                             IndemnityAgreementFactory agreementFactory,
-                            CustomerCommunicationService communicationService) {
+                            IndemnityCommunicationService communicationService) {
         this.customerRepository = customerRepository;
         this.agreementRepository = agreementRepository;
         this.agreementFactory = agreementFactory;
@@ -59,10 +59,6 @@ public class IndemnityService {
         }
 
         return response;
-    }
-
-    public Optional<IndemnityAgreement> getAgreement(UUID customerId) {
-        return agreementRepository.findByCustomerId(customerId);
     }
 
     private Customer getCustomer(UUID customerId) {

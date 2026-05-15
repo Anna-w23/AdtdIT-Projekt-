@@ -44,11 +44,12 @@ public class SpaceMateApp extends Application {
         // --- Mocked external services ---
         SimulationConfig simulationConfig = new SimulationConfig();
         SimulatedClock clock = new SimulatedClock();
+        java.util.Random random = new java.util.Random();
 
         CustomerCommunicationService communicationService =
-                new MockCustomerCommunicationService(customerRepo, documentRepo, availabilityRepo, clock, simulationConfig);
+                new MockCustomerCommunicationService(customerRepo, documentRepo, availabilityRepo, clock, simulationConfig, random);
         DocumentAnalysisService analysisService =
-                new MockDocumentAnalysisService(documentRepo);
+                new MockDocumentAnalysisService(documentRepo, random);
         AppointmentReportService appointmentReportService =
                 new MockAppointmentReportService(documentRepo);
 
@@ -72,13 +73,18 @@ public class SpaceMateApp extends Application {
                 customerRepo, appointmentRepo, medicalReportRepo, medicalReportFactory);
         TrainingService trainingService = new TrainingService(
                 customerRepo, appointmentRepo);
+        AppointmentSimulationService simulationService = new AppointmentSimulationService(
+                documentRepo, medicalService, trainingService, appointmentReportService, random);
+        RefusalHandler refusalHandler = new RefusalHandler(
+                customerRepo, appointmentRepo, schedulingService);
 
         // --- Orchestrator ---
         OnboardingOrchestrator orchestrator = new OnboardingOrchestrator(
                 customerRepo, medicalReportRepo, appointmentRepo, documentRepo,
                 documentAttachmentRepo, registrationService, indemnityService,
                 schedulingService, medicalService, trainingService,
-                resourceAssignmentService, communicationService, appointmentReportService);
+                resourceAssignmentService, communicationService, appointmentReportService,
+                simulationService, refusalHandler);
 
         // --- Seed staff and resources ---
         new DataSeeder(staffRepo, staffAvailabilityRepo, resourceRepo, resourceAvailabilityRepo,
@@ -87,8 +93,11 @@ public class SpaceMateApp extends Application {
         // --- Customer spawner ---
         CustomerSpawner spawner = new CustomerSpawner(orchestrator, clock);
 
+        // --- Simulation advancer ---
+        SimulationAdvancer simulationAdvancer = new SimulationAdvancer(orchestrator);
+
         // --- UI ---
-        MainController controller = new MainController(orchestrator, staffRepo, resourceRepo, clock, spawner, simulationConfig);
+        MainController controller = new MainController(orchestrator, staffRepo, resourceRepo, staffResolver, simulationAdvancer, clock, spawner, simulationConfig);
 
         Scene scene = new Scene(controller.getRoot(), 1200, 800);
         primaryStage.setTitle("SpaceMate – Tourist Onboarding");

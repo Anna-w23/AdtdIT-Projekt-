@@ -63,13 +63,7 @@ public class ResourceAssignmentService {
 
         List<ResourceAssignment> existing = assignmentRepository.findByAppointmentId(appointmentId);
         existing.stream()
-                .filter(a -> {
-                    if (resource.getCategory() == ResourceCategory.ROOM) {
-                        return a.getResource().getCategory() == ResourceCategory.ROOM;
-                    }
-                    return a.getResource().getCategory() == resource.getCategory()
-                            && java.util.Objects.equals(a.getResource().getTag(), resource.getTag());
-                })
+                .filter(a -> shouldReplace(a, resource))
                 .forEach(a -> assignmentRepository.deleteByAppointmentAndResource(appointmentId, a.getResourceId()));
 
         doAssign(appointmentId, resourceId, start);
@@ -110,22 +104,15 @@ public class ResourceAssignmentService {
     }
 
     public boolean hasRequiredResources(UUID appointmentId, AppointmentType type) {
-        List<ResourceRequirement> requirements = requirementResolver.getRequirements(type);
-        List<ResourceAssignment> assignments = assignmentRepository.findByAppointmentId(appointmentId);
-
-        for (ResourceRequirement req : requirements) {
-            boolean satisfied = assignments.stream().anyMatch(a ->
-                    a.getResource().getCategory() == req.category()
-                            && (req.tag() == null || req.tag().equals(a.getResource().getTag())));
-            if (!satisfied) return false;
-        }
-        return true;
+        return allRequirementsSatisfied(appointmentId, requirementResolver.getRequirements(type));
     }
 
     public boolean hasRequiredResources(UUID appointmentId, Appointment appointment) {
-        List<ResourceRequirement> requirements = requirementResolver.getRequirements(appointment);
-        List<ResourceAssignment> assignments = assignmentRepository.findByAppointmentId(appointmentId);
+        return allRequirementsSatisfied(appointmentId, requirementResolver.getRequirements(appointment));
+    }
 
+    private boolean allRequirementsSatisfied(UUID appointmentId, List<ResourceRequirement> requirements) {
+        List<ResourceAssignment> assignments = assignmentRepository.findByAppointmentId(appointmentId);
         for (ResourceRequirement req : requirements) {
             boolean satisfied = assignments.stream().anyMatch(a ->
                     a.getResource().getCategory() == req.category()
@@ -152,14 +139,7 @@ public class ResourceAssignmentService {
     }
 
     private boolean isAvailable(UUID resourceId, LocalDateTime start, LocalDateTime end) {
-        List<ResourceAvailability> windows = availabilityRepository
-                .findByResourceIdAndDate(resourceId, start.toLocalDate());
-        boolean withinWindow = windows.stream().anyMatch(w -> w.contains(start, end));
-        if (!withinWindow) return false;
-
-        List<ResourceAssignment> bookings = assignmentRepository
-                .findByResourceIdAndDate(resourceId, start.toLocalDate());
-        return bookings.isEmpty();
+        return isAvailableExcluding(resourceId, start, end, null);
     }
 
     private boolean isAvailableExcluding(UUID resourceId, LocalDateTime start, LocalDateTime end,
@@ -171,7 +151,16 @@ public class ResourceAssignmentService {
 
         List<ResourceAssignment> bookings = assignmentRepository
                 .findByResourceIdAndDate(resourceId, start.toLocalDate());
+        if (excludeAppointmentId == null) return bookings.isEmpty();
         return bookings.stream().allMatch(b -> b.getAppointmentId().equals(excludeAppointmentId));
+    }
+
+    private boolean shouldReplace(ResourceAssignment existing, Resource newResource) {
+        if (newResource.getCategory() == ResourceCategory.ROOM) {
+            return existing.getResource().getCategory() == ResourceCategory.ROOM;
+        }
+        return existing.getResource().getCategory() == newResource.getCategory()
+                && java.util.Objects.equals(existing.getResource().getTag(), newResource.getTag());
     }
 
     private void doAssign(UUID appointmentId, UUID resourceId, LocalDateTime appointmentStart) {

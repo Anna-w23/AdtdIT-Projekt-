@@ -12,7 +12,6 @@ public class Appointment {
     private final AppointmentType type;
     private AppointmentStatus status;
     private final LocalDateTime scheduledAt;
-    private String notes;
 
     public Appointment(UUID id, Customer customer, Staff conductor,
                        TimeSlot timeSlot, AppointmentType type, LocalDateTime scheduledAt) {
@@ -35,10 +34,8 @@ public class Appointment {
     public AppointmentType getType() { return type; }
     public AppointmentStatus getStatus() { return status; }
     public LocalDateTime getScheduledAt() { return scheduledAt; }
-    public String getNotes() { return notes; }
 
     public void setStatus(AppointmentStatus status) { this.status = status; }
-    public void setNotes(String notes) { this.notes = notes; }
 
     @Override
     public String toString() {

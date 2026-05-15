@@ -47,7 +47,7 @@ public class InMemoryTimeSlotRepository implements TimeSlotRepository {
     @Override
     public void markFree(UUID slotId) {
         TimeSlot slot = store.get(slotId);
-        if (slot == null) return;
+        if (slot == null) throw new NoSuchElementException("TimeSlot not found: " + slotId);
         slot.setBooked(false);
     }
 }

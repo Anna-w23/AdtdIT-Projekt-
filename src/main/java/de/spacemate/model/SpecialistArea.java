@@ -1,29 +1,25 @@
 package de.spacemate.model;
 
 public enum SpecialistArea {
-    EYES,
-    CARDIOLOGY,
-    NEUROLOGY,
-    ORTHOPEDICS,
-    PSYCHOLOGY;
+    EYES("Eyes", AppointmentType.EYE_SPECIALIST),
+    CARDIOLOGY("Cardiology", AppointmentType.CARDIOLOGIST),
+    NEUROLOGY("Neurology", AppointmentType.NEUROLOGIST),
+    ORTHOPEDICS("Orthopedics", AppointmentType.ORTHOPEDIST),
+    PSYCHOLOGY("Psychology", AppointmentType.PSYCHOLOGIST_CONSULTATION);
+
+    private final String displayName;
+    private final AppointmentType appointmentType;
+
+    SpecialistArea(String displayName, AppointmentType appointmentType) {
+        this.displayName = displayName;
+        this.appointmentType = appointmentType;
+    }
 
     public AppointmentType toAppointmentType() {
-        return switch (this) {
-            case EYES -> AppointmentType.EYE_SPECIALIST;
-            case CARDIOLOGY -> AppointmentType.CARDIOLOGIST;
-            case NEUROLOGY -> AppointmentType.NEUROLOGIST;
-            case ORTHOPEDICS -> AppointmentType.ORTHOPEDIST;
-            case PSYCHOLOGY -> AppointmentType.PSYCHOLOGIST_CONSULTATION;
-        };
+        return appointmentType;
     }
 
     public String displayName() {
-        return switch (this) {
-            case EYES -> "Eyes";
-            case CARDIOLOGY -> "Cardiology";
-            case NEUROLOGY -> "Neurology";
-            case ORTHOPEDICS -> "Orthopedics";
-            case PSYCHOLOGY -> "Psychology";
-        };
+        return displayName;
     }
 }

@@ -20,7 +20,7 @@ public class MockCustomerCommunicationService implements CustomerCommunicationSe
     private final CustomerAvailabilityRepository availabilityRepository;
     private final SimulatedClock clock;
     private final SimulationConfig simulationConfig;
-    private final Random random = new Random();
+    private final Random random;
 
     private final Map<UUID, LocalDateTime> respondAt = new LinkedHashMap<>();
     private final Map<UUID, CustomerResponse> preparedResponses = new LinkedHashMap<>();
@@ -29,28 +29,24 @@ public class MockCustomerCommunicationService implements CustomerCommunicationSe
                                             DocumentRepository documentRepository,
                                             CustomerAvailabilityRepository availabilityRepository,
                                             SimulatedClock clock,
-                                            SimulationConfig simulationConfig) {
+                                            SimulationConfig simulationConfig,
+                                            Random random) {
         this.customerRepository = customerRepository;
         this.documentRepository = documentRepository;
         this.availabilityRepository = availabilityRepository;
         this.clock = clock;
         this.simulationConfig = simulationConfig;
+        this.random = random;
     }
 
     @Override
     public CustomerResponse sendQuestionnaire(UUID customerId) {
         Customer customer = getCustomer(customerId);
-        LocalDateTime now = clock.now();
 
-        Document outbound = new Document(UUID.randomUUID(), customerId,
-                DocumentType.CORRESPONDENCE, DocumentCategory.QUESTIONNAIRE,
-                DocumentDirection.OUTBOUND, now, "Questionnaire sent to " + customer.getFullName());
-        documentRepository.save(outbound);
-
-        Document inbound = new Document(UUID.randomUUID(), customerId,
-                DocumentType.CORRESPONDENCE, DocumentCategory.QUESTIONNAIRE,
-                DocumentDirection.INBOUND, now, "Questionnaire completed by " + customer.getFullName());
-        documentRepository.save(inbound);
+        createCorrespondence(customerId, DocumentCategory.QUESTIONNAIRE,
+                DocumentDirection.OUTBOUND, "Questionnaire sent to " + customer.getFullName());
+        createCorrespondence(customerId, DocumentCategory.QUESTIONNAIRE,
+                DocumentDirection.INBOUND, "Questionnaire completed by " + customer.getFullName());
 
         generateCustomerAvailability(customerId);
 
@@ -62,13 +58,11 @@ public class MockCustomerCommunicationService implements CustomerCommunicationSe
         Customer customer = getCustomer(customerId);
         LocalDateTime now = clock.now();
 
-        Document outbound = new Document(UUID.randomUUID(), customerId,
-                DocumentType.CORRESPONDENCE, DocumentCategory.APPOINTMENT_PROPOSAL,
-                DocumentDirection.OUTBOUND, now, "Appointment proposal sent");
+        Document outbound = createCorrespondence(customerId, DocumentCategory.APPOINTMENT_PROPOSAL,
+                DocumentDirection.OUTBOUND, "Appointment proposal sent");
         outbound.putMetadata("appointmentId", appointmentId.toString());
-        documentRepository.save(outbound);
 
-        double refusalRate = customer.isIndemnityAgreementSigned() ? 0.50 : 0.30;
+        double refusalRate = customer.isIndemnityAgreementSigned() ? 0.15 : 0.08;
         double roll = random.nextDouble();
 
         ResponseOutcome outcome;
@@ -103,7 +97,6 @@ public class MockCustomerCommunicationService implements CustomerCommunicationSe
 
     @Override
     public CustomerResponse collectAppointmentResponse(UUID customerId, UUID appointmentId) {
-        LocalDateTime now = clock.now();
         CustomerResponse response = preparedResponses.remove(appointmentId);
         respondAt.remove(appointmentId);
 
@@ -111,12 +104,10 @@ public class MockCustomerCommunicationService implements CustomerCommunicationSe
             throw new IllegalStateException("No pending response for appointment: " + appointmentId);
         }
 
-        Document inbound = new Document(UUID.randomUUID(), customerId,
-                DocumentType.CORRESPONDENCE, DocumentCategory.APPOINTMENT_RESPONSE,
-                DocumentDirection.INBOUND, now, response.message());
+        Document inbound = createCorrespondence(customerId, DocumentCategory.APPOINTMENT_RESPONSE,
+                DocumentDirection.INBOUND, response.message());
         inbound.putMetadata("appointmentId", appointmentId.toString());
         inbound.putMetadata("outcome", response.outcome().name());
-        documentRepository.save(inbound);
 
         return response;
     }
@@ -124,27 +115,21 @@ public class MockCustomerCommunicationService implements CustomerCommunicationSe
     @Override
     public void sendAppointmentReminder(UUID customerId, UUID appointmentId) {
         Customer customer = getCustomer(customerId);
-        LocalDateTime now = clock.now();
 
-        Document outbound = new Document(UUID.randomUUID(), customerId,
-                DocumentType.CORRESPONDENCE, DocumentCategory.APPOINTMENT_PROPOSAL,
-                DocumentDirection.OUTBOUND, now, "Reminder sent for appointment proposal");
+        Document outbound = createCorrespondence(customerId, DocumentCategory.APPOINTMENT_PROPOSAL,
+                DocumentDirection.OUTBOUND, "Reminder sent for appointment proposal");
         outbound.putMetadata("appointmentId", appointmentId.toString());
         outbound.putMetadata("type", "reminder");
-        documentRepository.save(outbound);
 
-        respondAt.put(appointmentId, now);
+        respondAt.put(appointmentId, clock.now());
     }
 
     @Override
     public CustomerResponse sendIndemnityAgreement(UUID customerId) {
         Customer customer = getCustomer(customerId);
-        LocalDateTime now = clock.now();
 
-        Document outbound = new Document(UUID.randomUUID(), customerId,
-                DocumentType.CORRESPONDENCE, DocumentCategory.INDEMNITY_AGREEMENT,
-                DocumentDirection.OUTBOUND, now, "Indemnity agreement sent to " + customer.getFullName());
-        documentRepository.save(outbound);
+        createCorrespondence(customerId, DocumentCategory.INDEMNITY_AGREEMENT,
+                DocumentDirection.OUTBOUND, "Indemnity agreement sent to " + customer.getFullName());
 
         return new CustomerResponse(ResponseOutcome.ACCEPTED, "Indemnity agreement sent");
     }
@@ -152,19 +137,24 @@ public class MockCustomerCommunicationService implements CustomerCommunicationSe
     @Override
     public CustomerResponse collectIndemnityResponse(UUID customerId) {
         Customer customer = getCustomer(customerId);
-        LocalDateTime now = clock.now();
 
-        boolean signed = random.nextDouble() < 0.80;
+        boolean signed = random.nextDouble() < 0.95;
         ResponseOutcome outcome = signed ? ResponseOutcome.ACCEPTED : ResponseOutcome.REFUSED;
         String message = signed ? "Customer signed indemnity agreement" : "Customer refused indemnity agreement";
 
-        Document inbound = new Document(UUID.randomUUID(), customerId,
-                DocumentType.CORRESPONDENCE, DocumentCategory.INDEMNITY_RESPONSE,
-                DocumentDirection.INBOUND, now, message);
+        Document inbound = createCorrespondence(customerId, DocumentCategory.INDEMNITY_RESPONSE,
+                DocumentDirection.INBOUND, message);
         inbound.putMetadata("outcome", outcome.name());
-        documentRepository.save(inbound);
 
         return new CustomerResponse(outcome, message);
+    }
+
+    private Document createCorrespondence(UUID customerId, DocumentCategory category,
+                                           DocumentDirection direction, String content) {
+        Document doc = new Document(UUID.randomUUID(), customerId,
+                DocumentType.CORRESPONDENCE, category, direction, clock.now(), content);
+        documentRepository.save(doc);
+        return doc;
     }
 
     private Customer getCustomer(UUID customerId) {

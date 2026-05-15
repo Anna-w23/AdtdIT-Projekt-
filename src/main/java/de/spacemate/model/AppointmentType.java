@@ -1,72 +1,92 @@
 package de.spacemate.model;
 
-import java.time.Duration;
-
 public enum AppointmentType {
-    INITIAL_MEDICAL(Duration.ofMinutes(60)),
-    EYE_SPECIALIST(Duration.ofMinutes(45)),
-    CARDIOLOGIST(Duration.ofMinutes(45)),
-    NEUROLOGIST(Duration.ofMinutes(45)),
-    ORTHOPEDIST(Duration.ofMinutes(45)),
-    PSYCHOLOGIST_CONSULTATION(Duration.ofMinutes(60)),
-    SPACE_TRAINING(Duration.ofMinutes(90)),
-    FINAL_MEDICAL(Duration.ofMinutes(60));
+    INITIAL_MEDICAL("Initial Medical", false,
+            OnboardingStage.FIRST_MEDICAL_SCHEDULED, OnboardingStage.FIRST_MEDICAL_COMPLETED,
+            null, SimulationCategory.INITIAL_MEDICAL, ResourceProfile.MEDICAL),
 
-    private final Duration duration;
+    EYE_SPECIALIST("Eye Specialist", true,
+            OnboardingStage.SPECIALIST_SCHEDULED, OnboardingStage.SPECIALIST_COMPLETED,
+            StaffRole.EYE_SPECIALIST, SimulationCategory.SPECIALIST, ResourceProfile.MEDICAL),
 
-    AppointmentType(Duration duration) {
-        this.duration = duration;
-    }
+    CARDIOLOGIST("Cardiologist", true,
+            OnboardingStage.SPECIALIST_SCHEDULED, OnboardingStage.SPECIALIST_COMPLETED,
+            StaffRole.CARDIOLOGIST, SimulationCategory.SPECIALIST, ResourceProfile.MEDICAL),
 
-    public Duration getDuration() {
-        return duration;
-    }
+    NEUROLOGIST("Neurologist", true,
+            OnboardingStage.SPECIALIST_SCHEDULED, OnboardingStage.SPECIALIST_COMPLETED,
+            StaffRole.NEUROLOGIST, SimulationCategory.SPECIALIST, ResourceProfile.MEDICAL),
 
-    public Duration getDuration(boolean extended) {
-        if (this == SPACE_TRAINING && extended) {
-            return Duration.ofMinutes(120);
-        }
-        return duration;
+    ORTHOPEDIST("Orthopedist", true,
+            OnboardingStage.SPECIALIST_SCHEDULED, OnboardingStage.SPECIALIST_COMPLETED,
+            StaffRole.ORTHOPEDIST, SimulationCategory.SPECIALIST, ResourceProfile.MEDICAL),
+
+    PSYCHOLOGIST_CONSULTATION("Psychologist Consultation", true,
+            OnboardingStage.SPECIALIST_SCHEDULED, OnboardingStage.SPECIALIST_COMPLETED,
+            StaffRole.PSYCHOLOGIST, SimulationCategory.SPECIALIST, ResourceProfile.MEDICAL),
+
+    SPACE_TRAINING("Space Training", false,
+            OnboardingStage.SPACE_TRAINING_SCHEDULED, OnboardingStage.SPACE_TRAINING_COMPLETED,
+            StaffRole.SPACE_TRAINER, SimulationCategory.TRAINING, ResourceProfile.TRAINING),
+
+    FINAL_MEDICAL("Final Medical", false,
+            OnboardingStage.FINAL_MEDICAL_SCHEDULED, OnboardingStage.FINAL_MEDICAL_COMPLETED,
+            null, SimulationCategory.FINAL_MEDICAL, ResourceProfile.MEDICAL);
+
+    private final String displayName;
+    private final boolean specialist;
+    private final OnboardingStage scheduledStage;
+    private final OnboardingStage completedStage;
+    private final StaffRole requiredRole;
+    private final SimulationCategory simulationCategory;
+    private final ResourceProfile resourceProfile;
+
+    AppointmentType(String displayName, boolean specialist,
+                    OnboardingStage scheduledStage, OnboardingStage completedStage,
+                    StaffRole requiredRole, SimulationCategory simulationCategory,
+                    ResourceProfile resourceProfile) {
+        this.displayName = displayName;
+        this.specialist = specialist;
+        this.scheduledStage = scheduledStage;
+        this.completedStage = completedStage;
+        this.requiredRole = requiredRole;
+        this.simulationCategory = simulationCategory;
+        this.resourceProfile = resourceProfile;
     }
 
     public String displayName() {
-        return switch (this) {
-            case INITIAL_MEDICAL           -> "Initial Medical";
-            case EYE_SPECIALIST            -> "Eye Specialist";
-            case CARDIOLOGIST              -> "Cardiologist";
-            case NEUROLOGIST               -> "Neurologist";
-            case ORTHOPEDIST               -> "Orthopedist";
-            case PSYCHOLOGIST_CONSULTATION -> "Psychologist Consultation";
-            case SPACE_TRAINING            -> "Space Training";
-            case FINAL_MEDICAL             -> "Final Medical";
-        };
+        return displayName;
     }
 
     public boolean isSpecialist() {
-        return switch (this) {
-            case EYE_SPECIALIST, CARDIOLOGIST, NEUROLOGIST,
-                 ORTHOPEDIST, PSYCHOLOGIST_CONSULTATION -> true;
-            default -> false;
-        };
+        return specialist;
     }
 
     public OnboardingStage scheduledStage() {
-        return switch (this) {
-            case INITIAL_MEDICAL                                    -> OnboardingStage.FIRST_MEDICAL_SCHEDULED;
-            case EYE_SPECIALIST, CARDIOLOGIST, NEUROLOGIST,
-                 ORTHOPEDIST, PSYCHOLOGIST_CONSULTATION            -> OnboardingStage.SPECIALIST_SCHEDULED;
-            case SPACE_TRAINING                                     -> OnboardingStage.SPACE_TRAINING_SCHEDULED;
-            case FINAL_MEDICAL                                      -> OnboardingStage.FINAL_MEDICAL_SCHEDULED;
-        };
+        return scheduledStage;
     }
 
     public OnboardingStage completedStage() {
-        return switch (this) {
-            case INITIAL_MEDICAL                                    -> OnboardingStage.FIRST_MEDICAL_COMPLETED;
-            case EYE_SPECIALIST, CARDIOLOGIST, NEUROLOGIST,
-                 ORTHOPEDIST, PSYCHOLOGIST_CONSULTATION            -> OnboardingStage.SPECIALIST_COMPLETED;
-            case SPACE_TRAINING                                     -> OnboardingStage.SPACE_TRAINING_COMPLETED;
-            case FINAL_MEDICAL                                      -> OnboardingStage.FINAL_MEDICAL_COMPLETED;
-        };
+        return completedStage;
+    }
+
+    public StaffRole getRequiredRole() {
+        return requiredRole;
+    }
+
+    public SimulationCategory getSimulationCategory() {
+        return simulationCategory;
+    }
+
+    public ResourceProfile getResourceProfile() {
+        return resourceProfile;
+    }
+
+    public enum SimulationCategory {
+        INITIAL_MEDICAL, FINAL_MEDICAL, SPECIALIST, TRAINING
+    }
+
+    public enum ResourceProfile {
+        MEDICAL, TRAINING
     }
 }

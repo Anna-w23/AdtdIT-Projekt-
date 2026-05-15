@@ -185,18 +185,6 @@ public class DocumentListPopover {
     }
 
     private String formatCategory(DocumentCategory category) {
-        return switch (category) {
-            case QUESTIONNAIRE -> "Questionnaire";
-            case AI_LEGAL_REPORT -> "AI Legal Report";
-            case AI_MEDICAL_REPORT -> "AI Medical Report";
-            case AI_TRAINER_REPORT -> "AI Trainer Report";
-            case MEDICAL_REPORT -> "Medical Report";
-            case SPECIALIST_REPORT -> "Specialist Report";
-            case TRAINING_REPORT -> "Training Report";
-            case APPOINTMENT_PROPOSAL -> "Appointment Proposal";
-            case APPOINTMENT_RESPONSE -> "Appointment Response";
-            case INDEMNITY_AGREEMENT -> "Indemnity Agreement";
-            case INDEMNITY_RESPONSE -> "Indemnity Response";
-        };
+        return category.displayName();
     }
 }

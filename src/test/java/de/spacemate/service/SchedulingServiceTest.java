@@ -35,8 +35,6 @@ class SchedulingServiceTest {
             return id.equals(customerId) ? Optional.of(customer) : Optional.empty();
         }
         @Override public List<Customer> findAll() { return List.of(customer); }
-        @Override public List<Customer> findByStage(OnboardingStage stage) { return List.of(); }
-        @Override public void delete(UUID id) {}
     };
 
     private final TimeSlotRepository timeSlotRepo = new TimeSlotRepository() {
@@ -58,8 +56,8 @@ class SchedulingServiceTest {
         @Override public void save(Appointment a) { savedAppointments.add(a); }
         @Override public Optional<Appointment> findById(UUID id) { return Optional.empty(); }
         @Override public List<Appointment> findByCustomerId(UUID id) { return List.of(); }
-        @Override public List<Appointment> findByCustomerIdAndType(UUID id, AppointmentType type) { return List.of(); }
         @Override public List<Appointment> findByDateAndStatus(LocalDate date, AppointmentStatus status) { return List.of(); }
+        @Override public List<Appointment> findByStatus(AppointmentStatus status) { return List.of(); }
         @Override public List<Appointment> findAll() { return new ArrayList<>(savedAppointments); }
     };
 
@@ -89,7 +87,10 @@ class SchedulingServiceTest {
         @Override public List<Staff> findByRole(StaffRole role) { return List.of(doctor); }
     };
 
-    private final AppointmentTypeStaffResolver staffResolver = type -> List.of(doctor);
+    private final AppointmentTypeStaffResolver staffResolver = new AppointmentTypeStaffResolver() {
+        @Override public List<Staff> findQualifiedStaff(AppointmentType type) { return List.of(doctor); }
+        @Override public boolean canHandle(AppointmentType type, Staff staff) { return true; }
+    };
     private final AppointmentFactory appointmentFactory = new DefaultAppointmentFactory();
     private final TimeSlotFactory timeSlotFactory = new DefaultTimeSlotFactory();
 

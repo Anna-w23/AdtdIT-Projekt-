@@ -545,6 +545,7 @@ public class WeekCalendarView extends BorderPane {
         overlay.getChildren().add(zone);
     }
 
+    // OCP: UI color mapping — presentation concern, not business logic
     private Color staffZoneColor(StaffRole role) {
         return switch (role) {
             case EYE_SPECIALIST, CARDIOLOGIST, NEUROLOGIST, ORTHOPEDIST, PSYCHOLOGIST ->
@@ -813,6 +814,7 @@ public class WeekCalendarView extends BorderPane {
         return hour - FIRST_HOUR;
     }
 
+    // OCP: UI color mapping — presentation concern with domain-complete enum
     private Color colorForStatus(AppointmentStatus status) {
         return switch (status) {
             case SUGGESTED  -> COLOR_SUGGESTED;

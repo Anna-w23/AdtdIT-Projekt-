@@ -11,37 +11,35 @@ import java.util.UUID;
 public class MockDocumentAnalysisService implements DocumentAnalysisService {
 
     private final DocumentRepository documentRepository;
-    private final Random random = new Random();
+    private final Random random;
 
-    public MockDocumentAnalysisService(DocumentRepository documentRepository) {
+    public MockDocumentAnalysisService(DocumentRepository documentRepository, Random random) {
         this.documentRepository = documentRepository;
+        this.random = random;
     }
 
     @Override
     public AnalysisResult analyseQuestionnaire(UUID customerId, Document questionnaire) {
-        LocalDateTime now = LocalDateTime.now();
-
-        Document legalReport = new Document(UUID.randomUUID(), customerId,
-                DocumentType.REPORT, DocumentCategory.AI_LEGAL_REPORT,
-                DocumentDirection.OUTBOUND, now,
+        Document legalReport = createAnalysisReport(customerId, DocumentCategory.AI_LEGAL_REPORT,
                 "Legal analysis: no contraindications found. Customer eligible for standard onboarding.");
-        documentRepository.save(legalReport);
 
-        Document medicalReport = new Document(UUID.randomUUID(), customerId,
-                DocumentType.REPORT, DocumentCategory.AI_MEDICAL_REPORT,
-                DocumentDirection.OUTBOUND, now,
+        Document medicalReport = createAnalysisReport(customerId, DocumentCategory.AI_MEDICAL_REPORT,
                 "Medical pre-analysis: recommend thorough initial examination. No prior conditions flagged.");
-        documentRepository.save(medicalReport);
 
         boolean needsExtendedTraining = random.nextDouble() < 0.25;
-        Document trainerReport = new Document(UUID.randomUUID(), customerId,
-                DocumentType.REPORT, DocumentCategory.AI_TRAINER_REPORT,
-                DocumentDirection.OUTBOUND, now,
+        Document trainerReport = createAnalysisReport(customerId, DocumentCategory.AI_TRAINER_REPORT,
                 "Trainer analysis: customer fitness profile assessed. Extended training "
                         + (needsExtendedTraining ? "recommended" : "not required") + ".");
         trainerReport.putMetadata("needsExtendedTraining", String.valueOf(needsExtendedTraining));
-        documentRepository.save(trainerReport);
 
         return new AnalysisResult(legalReport, medicalReport, trainerReport);
+    }
+
+    private Document createAnalysisReport(UUID customerId, DocumentCategory category, String content) {
+        Document doc = new Document(UUID.randomUUID(), customerId,
+                DocumentType.REPORT, category, DocumentDirection.OUTBOUND,
+                LocalDateTime.now(), content);
+        documentRepository.save(doc);
+        return doc;
     }
 }

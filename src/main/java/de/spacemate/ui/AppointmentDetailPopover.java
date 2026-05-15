@@ -386,7 +386,12 @@ public class AppointmentDetailPopover {
 
         combo.valueProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
-                orchestrator.assignResource(appointment.getId(), newVal.getId());
+                try {
+                    orchestrator.assignResource(appointment.getId(), newVal.getId());
+                } catch (IllegalStateException ex) {
+                    new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.WARNING,
+                            "Resource is no longer available. Please choose another.").showAndWait();
+                }
                 popup.hide();
                 onChanged.run();
             }
@@ -408,19 +413,7 @@ public class AppointmentDetailPopover {
     }
 
     private String formatCategory(DocumentCategory category) {
-        return switch (category) {
-            case QUESTIONNAIRE -> "Questionnaire";
-            case AI_LEGAL_REPORT -> "AI Legal Report";
-            case AI_MEDICAL_REPORT -> "AI Medical Report";
-            case AI_TRAINER_REPORT -> "AI Trainer Report";
-            case MEDICAL_REPORT -> "Medical Report";
-            case SPECIALIST_REPORT -> "Specialist Report";
-            case TRAINING_REPORT -> "Training Report";
-            case APPOINTMENT_PROPOSAL -> "Appointment Proposal";
-            case APPOINTMENT_RESPONSE -> "Appointment Response";
-            case INDEMNITY_AGREEMENT -> "Indemnity Agreement";
-            case INDEMNITY_RESPONSE -> "Indemnity Response";
-        };
+        return category.displayName();
     }
 
     private Region separator() {

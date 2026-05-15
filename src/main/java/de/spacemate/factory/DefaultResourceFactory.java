@@ -6,6 +6,7 @@ import java.util.UUID;
 
 public class DefaultResourceFactory implements ResourceFactory {
 
+    // OCP: Factory is the designated place for polymorphic instantiation — switch here is intentional
     @Override
     public Resource create(UUID id, String name, ResourceCategory category, String tag) {
         return switch (category) {

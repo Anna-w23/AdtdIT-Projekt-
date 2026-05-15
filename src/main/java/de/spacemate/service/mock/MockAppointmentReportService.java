@@ -41,14 +41,8 @@ public class MockAppointmentReportService implements AppointmentReportService {
         }
 
         String outcome = medicalReport.requiresSpecialists() ? "REQUIRES_FOLLOWUP" : "PASSED";
-
-        Document doc = new Document(UUID.randomUUID(), customerId,
-                DocumentType.REPORT, DocumentCategory.MEDICAL_REPORT,
-                DocumentDirection.INBOUND, LocalDateTime.now(), content.toString());
-        doc.putMetadata("appointmentId", medicalReport.getAppointmentId().toString());
-        doc.putMetadata("outcome", outcome);
-        documentRepository.save(doc);
-        return doc;
+        return createReport(customerId, DocumentCategory.MEDICAL_REPORT,
+                medicalReport.getAppointmentId(), outcome, content.toString());
     }
 
     @Override
@@ -60,13 +54,8 @@ public class MockAppointmentReportService implements AppointmentReportService {
                 + "\n\nRecommendation: "
                 + (passed ? "Proceed with onboarding." : "Consider indemnity agreement or alternative pathway.");
 
-        Document doc = new Document(UUID.randomUUID(), customerId,
-                DocumentType.REPORT, DocumentCategory.SPECIALIST_REPORT,
-                DocumentDirection.INBOUND, LocalDateTime.now(), content);
-        doc.putMetadata("appointmentId", appointmentId.toString());
-        doc.putMetadata("outcome", passed ? "PASSED" : "FAILED");
-        documentRepository.save(doc);
-        return doc;
+        return createReport(customerId, DocumentCategory.SPECIALIST_REPORT,
+                appointmentId, passed ? "PASSED" : "FAILED", content);
     }
 
     @Override
@@ -77,13 +66,8 @@ public class MockAppointmentReportService implements AppointmentReportService {
                 ? "Trainee demonstrated adequate competence in zero-gravity procedures and emergency protocols. Cleared for final medical."
                 : "Trainee did not meet minimum competence thresholds. Consider indemnity agreement or re-scheduling.");
 
-        Document doc = new Document(UUID.randomUUID(), customerId,
-                DocumentType.REPORT, DocumentCategory.TRAINING_REPORT,
-                DocumentDirection.INBOUND, LocalDateTime.now(), content);
-        doc.putMetadata("appointmentId", appointmentId.toString());
-        doc.putMetadata("outcome", passed ? "PASSED" : "FAILED");
-        documentRepository.save(doc);
-        return doc;
+        return createReport(customerId, DocumentCategory.TRAINING_REPORT,
+                appointmentId, passed ? "PASSED" : "FAILED", content);
     }
 
     @Override
@@ -95,10 +79,16 @@ public class MockAppointmentReportService implements AppointmentReportService {
                 ? "Patient meets all medical requirements for spaceflight. Cleared for departure."
                 : "Patient does not meet flight eligibility criteria. Consider indemnity agreement.");
 
+        return createReport(customerId, DocumentCategory.MEDICAL_REPORT,
+                medicalReport.getAppointmentId(), outcome, content);
+    }
+
+    private Document createReport(UUID customerId, DocumentCategory category,
+                                   UUID appointmentId, String outcome, String content) {
         Document doc = new Document(UUID.randomUUID(), customerId,
-                DocumentType.REPORT, DocumentCategory.MEDICAL_REPORT,
-                DocumentDirection.INBOUND, LocalDateTime.now(), content);
-        doc.putMetadata("appointmentId", medicalReport.getAppointmentId().toString());
+                DocumentType.REPORT, category, DocumentDirection.INBOUND,
+                LocalDateTime.now(), content);
+        doc.putMetadata("appointmentId", appointmentId.toString());
         doc.putMetadata("outcome", outcome);
         documentRepository.save(doc);
         return doc;

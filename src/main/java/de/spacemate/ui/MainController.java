@@ -9,7 +9,9 @@ import de.spacemate.orchestration.OnboardingEventType;
 import de.spacemate.orchestration.OnboardingOrchestrator;
 import de.spacemate.repository.ResourceRepository;
 import de.spacemate.repository.StaffRepository;
+import de.spacemate.service.AppointmentTypeStaffResolver;
 import de.spacemate.service.CustomerNotAvailableException;
+import de.spacemate.service.SimulationAdvancer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -46,6 +48,7 @@ public class MainController implements OnboardingEventListener {
     private final OnboardingOrchestrator orchestrator;
     private final StaffRepository staffRepository;
     private final ResourceRepository resourceRepository;
+    private final AppointmentTypeStaffResolver staffResolver;
     private final SimulatedClock clock;
     private final SimulationConfig simulationConfig;
     private final WeekCalendarView calendarView;
@@ -70,17 +73,21 @@ public class MainController implements OnboardingEventListener {
     private final Timeline autoTimeline = new Timeline(
             new KeyFrame(Duration.millis(100), e -> tickSimulation()));
 
-    private final Set<UUID> processedToday = new HashSet<>();
+    private final SimulationAdvancer simulationAdvancer;
 
     public MainController(OnboardingOrchestrator orchestrator,
                           StaffRepository staffRepository,
                           ResourceRepository resourceRepository,
+                          AppointmentTypeStaffResolver staffResolver,
+                          SimulationAdvancer simulationAdvancer,
                           SimulatedClock clock,
                           CustomerSpawner customerSpawner,
                           SimulationConfig simulationConfig) {
         this.orchestrator = orchestrator;
         this.staffRepository = staffRepository;
         this.resourceRepository = resourceRepository;
+        this.staffResolver = staffResolver;
+        this.simulationAdvancer = simulationAdvancer;
         this.clock = clock;
         this.simulationConfig = simulationConfig;
         this.customerSpawner = customerSpawner;
@@ -490,25 +497,7 @@ public class MainController implements OnboardingEventListener {
     }
 
     private String formatStage(OnboardingStage stage) {
-        return switch (stage) {
-            case REGISTERED -> "Registered";
-            case QUESTIONNAIRE_SENT -> "Questionnaire Sent";
-            case QUESTIONNAIRE_COMPLETED -> "Questionnaire Completed";
-            case FIRST_MEDICAL_SCHEDULED -> "Initial Medical Scheduled";
-            case FIRST_MEDICAL_COMPLETED -> "Initial Medical Completed";
-            case SPECIALIST_SCHEDULED -> "Specialist Scheduled";
-            case SPECIALIST_COMPLETED -> "Specialist Completed";
-            case SPACE_TRAINING_SCHEDULED -> "Space Training Scheduled";
-            case SPACE_TRAINING_COMPLETED -> "Space Training Completed";
-            case FINAL_MEDICAL_SCHEDULED -> "Final Medical Scheduled";
-            case FINAL_MEDICAL_COMPLETED -> "Final Medical Completed";
-            case INDEMNITY_PENDING -> "Indemnity Pending";
-            case INDEMNITY_SIGNED -> "Indemnity Signed";
-            case APPOINTMENT_REFUSED -> "Appointment Refused";
-            case APPROVED -> "Approved";
-            case REJECTED -> "Rejected";
-            case FAILED -> "Failed";
-        };
+        return stage.displayName();
     }
 
     private String urgencyColor(Customer customer) {
@@ -564,6 +553,7 @@ public class MainController implements OnboardingEventListener {
         return customer.getCurrentStage() == OnboardingStage.APPROVED;
     }
 
+    // OCP: UI-facing messages per stage — presentation concern, not extensible business logic
     private String deriveNextStepMessage(Customer customer) {
         String name = customer.getFullName();
         return switch (customer.getCurrentStage()) {
@@ -612,6 +602,7 @@ public class MainController implements OnboardingEventListener {
         };
     }
 
+    // OCP: only 2 stages need action buttons; a pattern for 2 cases adds complexity without benefit
     private void buildActionButtons(Customer customer) {
         OnboardingStage stage = customer.getCurrentStage();
         UUID id = customer.getId();
@@ -663,7 +654,7 @@ public class MainController implements OnboardingEventListener {
         }
 
         List<AppointmentType> handleable = required.stream()
-                .filter(type -> roleMatchesStaff(type, staff.getRole()))
+                .filter(type -> staffResolver.canHandle(type, staff))
                 .toList();
 
         if (handleable.isEmpty()) {
@@ -695,18 +686,6 @@ public class MainController implements OnboardingEventListener {
             return;
         }
         refreshAfterAction(customer.getId());
-    }
-
-    private boolean roleMatchesStaff(AppointmentType type, StaffRole role) {
-        return switch (type) {
-            case INITIAL_MEDICAL, FINAL_MEDICAL    -> role == StaffRole.CHIEF_PHYSICIAN || role == StaffRole.RESIDENT_PHYSICIAN || role == StaffRole.NIGHT_PHYSICIAN;
-            case EYE_SPECIALIST                    -> role == StaffRole.EYE_SPECIALIST;
-            case CARDIOLOGIST                      -> role == StaffRole.CARDIOLOGIST;
-            case NEUROLOGIST                       -> role == StaffRole.NEUROLOGIST;
-            case ORTHOPEDIST                       -> role == StaffRole.ORTHOPEDIST;
-            case PSYCHOLOGIST_CONSULTATION         -> role == StaffRole.PSYCHOLOGIST;
-            case SPACE_TRAINING                    -> role == StaffRole.SPACE_TRAINER;
-        };
     }
 
     // -------------------------------------------------------------------------
@@ -788,7 +767,7 @@ public class MainController implements OnboardingEventListener {
         processAppointmentsUpTo(clock.today(), LocalTime.of(23, 59));
         String dayStr = clock.today().format(DAY_FMT);
         clock.advanceOneDay();
-        processedToday.clear();
+        simulationAdvancer.resetDay();
         if (autoSpawnEnabled) customerSpawner.spawnDaily();
         updateSimDayLabel();
         calendarView.showDateIfFollowing(clock.today());
@@ -807,7 +786,7 @@ public class MainController implements OnboardingEventListener {
         if (newTime.isBefore(oldTime)) {
             processAppointmentsUpTo(clock.today(), LocalTime.of(23, 59));
             clock.advanceOneDay();
-            processedToday.clear();
+            simulationAdvancer.resetDay();
             if (autoSpawnEnabled) customerSpawner.spawnDaily();
             updateSimDayLabel();
             calendarView.showDateIfFollowing(clock.today());
@@ -821,39 +800,7 @@ public class MainController implements OnboardingEventListener {
     }
 
     private void processAppointmentsUpTo(LocalDate date, LocalTime cutoff) {
-        boolean anyProcessed = false;
-
-        List<Appointment> suggested = orchestrator.findByDateAndStatus(date, AppointmentStatus.SUGGESTED)
-                .stream()
-                .filter(a -> !processedToday.contains(a.getId()))
-                .filter(a -> !a.getTimeSlot().getEnd().toLocalTime().isAfter(cutoff))
-                .filter(a -> {
-                    Customer c = orchestrator.getAllCustomers().stream()
-                            .filter(cu -> cu.getId().equals(a.getCustomerId()))
-                            .findFirst().orElse(null);
-                    return c != null && orchestrator.isScheduledStage(c.getCurrentStage());
-                })
-                .toList();
-        for (Appointment a : suggested) {
-            orchestrator.sendProposalToCustomer(a.getCustomerId(), a.getId());
-            processedToday.add(a.getId());
-            anyProcessed = true;
-        }
-
-        orchestrator.collectPendingResponses();
-
-        List<Appointment> confirmed = orchestrator.findByDateAndStatus(date, AppointmentStatus.CONFIRMED)
-                .stream()
-                .filter(a -> !a.getId().toString().startsWith("priv-"))
-                .filter(a -> !processedToday.contains(a.getId()))
-                .filter(a -> !a.getTimeSlot().getEnd().toLocalTime().isAfter(cutoff))
-                .toList();
-        for (Appointment a : confirmed) {
-            orchestrator.simulateResult(a.getCustomerId(), a.getId());
-            processedToday.add(a.getId());
-            anyProcessed = true;
-        }
-
+        boolean anyProcessed = simulationAdvancer.processAppointmentsUpTo(date, cutoff);
         if (anyProcessed) {
             Customer sel = customerList.getSelectionModel().getSelectedItem();
             if (sel != null) refreshAfterAction(sel.getId());
@@ -866,18 +813,7 @@ public class MainController implements OnboardingEventListener {
     }
 
     private String formatRole(StaffRole role) {
-        return switch (role) {
-            case CHIEF_PHYSICIAN    -> "Chief Physician";
-            case RESIDENT_PHYSICIAN -> "Resident Physician";
-            case NIGHT_PHYSICIAN    -> "Night Physician";
-            case PSYCHOLOGIST       -> "Psychologist";
-            case EYE_SPECIALIST     -> "Eye Specialist";
-            case CARDIOLOGIST       -> "Cardiologist";
-            case NEUROLOGIST        -> "Neurologist";
-            case ORTHOPEDIST        -> "Orthopedist";
-            case SPACE_TRAINER      -> "Space Trainer";
-            case PROCESS_MANAGER    -> "Process Manager";
-        };
+        return role.displayName();
     }
 
     private String formatResourceTag(String tag) {

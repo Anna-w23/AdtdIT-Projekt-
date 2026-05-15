@@ -15,17 +15,17 @@ public class DefaultAppointmentTypeStaffResolver implements AppointmentTypeStaff
 
     @Override
     public List<Staff> findQualifiedStaff(AppointmentType type) {
-        return switch (type) {
-            case INITIAL_MEDICAL, FINAL_MEDICAL ->
-                staffRepository.findAll().stream()
-                        .filter(s -> s instanceof Doctor)
-                        .toList();
-            case EYE_SPECIALIST    -> staffRepository.findByRole(StaffRole.EYE_SPECIALIST);
-            case CARDIOLOGIST      -> staffRepository.findByRole(StaffRole.CARDIOLOGIST);
-            case NEUROLOGIST       -> staffRepository.findByRole(StaffRole.NEUROLOGIST);
-            case ORTHOPEDIST       -> staffRepository.findByRole(StaffRole.ORTHOPEDIST);
-            case PSYCHOLOGIST_CONSULTATION -> staffRepository.findByRole(StaffRole.PSYCHOLOGIST);
-            case SPACE_TRAINING    -> staffRepository.findByRole(StaffRole.SPACE_TRAINER);
-        };
+        StaffRole role = type.getRequiredRole();
+        if (role == null) {
+            return staffRepository.findAll().stream()
+                    .filter(s -> s.getRole().isPhysician())
+                    .toList();
+        }
+        return staffRepository.findByRole(role);
+    }
+
+    @Override
+    public boolean canHandle(AppointmentType type, Staff staff) {
+        return findQualifiedStaff(type).contains(staff);
     }
 }

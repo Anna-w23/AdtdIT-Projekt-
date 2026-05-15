@@ -13,8 +13,6 @@ public interface ResourceRepository {
 
     Optional<Resource> findById(UUID id);
 
-    List<Resource> findAll();
-
     List<Resource> findByCategory(ResourceCategory category);
 
     List<Resource> findByCategoryAndTag(ResourceCategory category, String tag);

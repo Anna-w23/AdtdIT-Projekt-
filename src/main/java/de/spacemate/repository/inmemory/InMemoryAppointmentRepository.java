@@ -2,7 +2,6 @@ package de.spacemate.repository.inmemory;
 
 import de.spacemate.model.Appointment;
 import de.spacemate.model.AppointmentStatus;
-import de.spacemate.model.AppointmentType;
 import de.spacemate.repository.AppointmentRepository;
 
 import java.time.LocalDate;
@@ -27,13 +26,6 @@ public class InMemoryAppointmentRepository implements AppointmentRepository {
     public List<Appointment> findByCustomerId(UUID customerId) {
         return store.values().stream()
                 .filter(a -> a.getCustomerId().equals(customerId))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Appointment> findByCustomerIdAndType(UUID customerId, AppointmentType type) {
-        return store.values().stream()
-                .filter(a -> a.getCustomerId().equals(customerId) && a.getType() == type)
                 .collect(Collectors.toList());
     }
 

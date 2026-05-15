@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface AppointmentTypeStaffResolver {
     List<Staff> findQualifiedStaff(AppointmentType type);
+    boolean canHandle(AppointmentType type, Staff staff);
 }

@@ -37,6 +37,7 @@ class ResourceAssignmentServiceTest {
     private final Set<String> deletedAssignments = new HashSet<>();
 
     private final ResourceRepository resourceRepo = new ResourceRepository() {
+        private final List<Resource> all = List.of(room, overflowRoom, vrHeadset);
         @Override public void save(Resource r) {}
         @Override public Optional<Resource> findById(UUID id) {
             if (id.equals(roomId)) return Optional.of(room);
@@ -44,12 +45,11 @@ class ResourceAssignmentServiceTest {
             if (id.equals(vrHeadsetId)) return Optional.of(vrHeadset);
             return Optional.empty();
         }
-        @Override public List<Resource> findAll() { return List.of(room, overflowRoom, vrHeadset); }
         @Override public List<Resource> findByCategory(ResourceCategory cat) {
-            return findAll().stream().filter(r -> r.getCategory() == cat).toList();
+            return all.stream().filter(r -> r.getCategory() == cat).toList();
         }
         @Override public List<Resource> findByCategoryAndTag(ResourceCategory cat, String tag) {
-            return findAll().stream()
+            return all.stream()
                     .filter(r -> r.getCategory() == cat && Objects.equals(r.getTag(), tag))
                     .toList();
         }
