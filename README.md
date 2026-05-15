@@ -16,7 +16,7 @@ HWG Ludwigshafen - Ausgewählte Themen der IT - IBAIT24
 ## ✨ What SpaceMate Is About
 
 SpaceMate is our intelligent coordination platform designed to streamline the entire **flight‑preparation journey** for commercial space tourists.  
-From medical checks to training sessions and scheduling - SpaceMate transforms a complex, multi‑role process into a **safe**, **efficient**, and **transparent** experience.
+From scheduling to medical checks and training sessions - SpaceMate transforms a complex, multi‑role process into a **safe**, **efficient**, and **transparent** experience.
 
 Our mission:  
 Enable every future space tourist to complete all preparation steps with clarity, confidence and minimal friction.
@@ -28,10 +28,10 @@ Enable every future space tourist to complete all preparation steps with clarity
 With SpaceMate, we elevate the quality of space‑tourism preparation to a new level:
 
 ### ⭐ **Clarity for Customers**  
-Tourists always know what comes next — no confusion, no missed steps.
+Space tourists always know what comes next - no confusion, no missed steps.
 
 ### ⭐ **Efficiency for Staff**  
-Doctors, trainers and process managers benefit from structured workflows and fewer manual tasks.
+Process Managers, doctors and trainers benefit from structured workflows and fewer manual tasks.
 
 ### ⭐ **Safety Through Standardization**  
 Consistent processes reduce risk and support reliable decision‑making.
@@ -40,6 +40,7 @@ Consistent processes reduce risk and support reliable decision‑making.
 Progress tracking, reminders and clear communication create trust and reduce uncertainty.
 
 SpaceMate combines **process excellence**, **user‑centric design** and **technical structure** - a strong foundation for the future of space tourism.
+All of this ensures that every customer can move smoothly and reliably through the entire preparation journey.
 
 ---
 
