@@ -1,0 +1,21 @@
+# Build output
+target/
+
+# IDE
+.idea/
+*.iml
+
+# OS
+.DS_Store
+
+# Claude Code
+CLAUDE.md
+.claude/
+
+# Documentation (kept locally, not pushed)
+SOLID according to my professor.md
+DOCUMENTATION.md
+ERD.md
+UML.md
+USER_GUIDE.md
+docs/
